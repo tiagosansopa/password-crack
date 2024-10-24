@@ -1,37 +1,58 @@
-import React, { useEffect, useState } from "react";
-import Profile from "./Profile";
-import UploadScript from "./UploadScript";
-
+import React, { useState, useEffect } from "react";
+import AuthForm from "./components/AuthForm";
+import AppLayout from "./components/Layout";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Instructions from "./components/instructions/Instructions";
+import Profiles from "./components/profile/Profiles";
+import Profile from "./components/profile/Profile";
+import MyStats from "./components/stats/MyStats";
+import Home from "./components/home/Home";
+import { user } from "./assets/test";
 function PasswordCrackerApp() {
-  const [profileId, setProfileId] = useState(1); // Default profile ID
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
-  // Switch between different profiles (example implementation)
-  const handleProfileChange = (e) => {
-    setProfileId(e.target.value);
+  const handleLogin = (token) => {
+    localStorage.setItem("token", token);
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
   };
 
   return (
-    <div>
-      <h1>Password Cracker Testing Platform</h1>
-
-      {/* Dropdown or input to change between profiles */}
-      <label>
-        Choose Profile ID:
-        <select value={profileId} onChange={handleProfileChange}>
-          <option value={1}>Profile 1</option>
-          <option value={2}>Profile 2</option>
-          <option value={3}>Profile 3</option>
-          <option value={4}>Profile 4</option>
-          <option value={5}>Profile 5</option>
-        </select>
-      </label>
-
-      {/* Display profile information */}
-      <Profile profileId={profileId} />
-
-      {/* Script upload and result display */}
-      <UploadScript profileId={profileId} />
-    </div>
+    <Router>
+      <AppLayout isLoggedIn={isLoggedIn}>
+        {!isLoggedIn ? (
+          <AuthForm onLogin={handleLogin} />
+        ) : (
+          <Routes>
+            <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="/home" element={<Home onLogout={handleLogout} />} />
+            <Route path="/instructions" element={<Instructions />} />
+            <Route
+              path="/my-stats"
+              element={
+                <MyStats
+                  name={user.name}
+                  username={user.username}
+                  email={user.email}
+                  onLogout={handleLogout}
+                />
+              }
+            />
+            <Route path="/profiles" element={<Profiles />} />
+            <Route path="/profiles/:id" element={<Profile />} />
+          </Routes>
+        )}
+      </AppLayout>
+    </Router>
   );
 }
 
