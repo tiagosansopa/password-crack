@@ -18,6 +18,43 @@ const PasswordTesterForm = () => {
   const [possiblePasswords, setPossiblePasswords] = useState(0);
   const [attemptsMade, setAttemptsMade] = useState(0);
   const [passwordCracked, setPasswordCracked] = useState(null);
+  const [result, setResult] = useState(null);
+
+  async function validatePasswordGuess(id, pattern, maxAttempts) {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/validate-password/${id}/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            pattern: pattern,
+            max_attempts: maxAttempts,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Response:", data);
+      return data;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  const handleSubmit = async () => {
+    const id = 1;
+    const maxAttempts = 500000;
+    const response = await validatePasswordGuess(id, regex, maxAttempts);
+    console.log(response);
+    setResult(response);
+  };
 
   // Assume passwordType is 3 for this example
   const passwordType = 3;
@@ -77,7 +114,14 @@ const PasswordTesterForm = () => {
           sx={{ mb: 2 }}
         />
 
-        <Button variant="contained" color="primary" onClick={handleTest}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            handleTest();
+            handleSubmit();
+          }}
+        >
           Test
         </Button>
 
@@ -93,6 +137,13 @@ const PasswordTesterForm = () => {
             Cantidad de intentos hechos: {attemptsMade}
           </Typography>
         </Box>
+
+        {result && (
+          <div>
+            <h3>Result</h3>
+            <p>{result.message}</p>
+          </div>
+        )}
 
         {/* Conditional Message */}
         {passwordCracked !== null &&
