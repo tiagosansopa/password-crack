@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useEffect } from "react";
 import {
   Grid,
   Card,
@@ -7,15 +7,30 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // For navigation
+import { useNavigate } from "react-router-dom";
 import { profilesData } from "../../assets/test";
 
 const Profiles = () => {
-  const navigate = useNavigate(); // For navigation to profile detail
+  const navigate = useNavigate();
 
   const handleProfileClick = (id) => {
-    navigate(`/profiles/${id}`); // Navigate to the Profile component for that specific profile
+    navigate(`/profiles/${id}`);
   };
+
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/profiles`
+        );
+        const data = await response.json();
+        console.error("the profiles:", data);
+      } catch (error) {
+        console.error("Error fetching profiles:", error);
+      }
+    };
+    fetchProfiles();
+  }, []);
 
   return (
     <Grid container spacing={3} sx={{ p: 3 }}>
