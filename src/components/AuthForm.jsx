@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Tabs, Tab, Box, TextField, Button } from "@mui/material";
 
-const AuthForm = () => {
+const AuthForm = ({ onLogin }) => {
   const [activeTab, setActiveTab] = useState(0); // 0 for login, 1 for register
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -12,10 +12,10 @@ const AuthForm = () => {
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
-    setMessage(""); // Clear any messages when switching tabs
+    setMessage("");
   };
 
-  const handleLogin = async (e) => {
+  const handleLoginAPI = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/login/`, {
@@ -28,11 +28,13 @@ const AuthForm = () => {
       const data = await response.json();
       if (response.ok) {
         setMessage("Login successful!");
-        localStorage.setItem("token", data.access); // Save token in localStorage
+        localStorage.setItem("token", data.access);
+        onLogin(data.access);
       } else {
         setMessage("Login failed");
       }
     } catch (error) {
+      console.log(error);
       setMessage("An error occurred");
     }
   };
@@ -57,12 +59,14 @@ const AuthForm = () => {
       const data = await response.json();
       if (response.ok) {
         setMessage("Registration successful!");
-        localStorage.setItem("token", data.access); // Save the token in localStorage
+        localStorage.setItem("token", data.access);
+        onLogin(data.access);
       } else {
         setMessage(data.error || "Registration failed");
       }
     } catch (error) {
       setMessage("An error occurred");
+      console.log(error);
     }
   };
 
@@ -74,7 +78,7 @@ const AuthForm = () => {
       </Tabs>
 
       {activeTab === 0 && (
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLoginAPI}>
           <TextField
             fullWidth
             margin="normal"

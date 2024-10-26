@@ -14,7 +14,7 @@ import MyStats from "./components/stats/MyStats";
 import Home from "./components/home/Home";
 import { user } from "./assets/test";
 function PasswordCrackerApp() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = (token) => {
     localStorage.setItem("token", token);
