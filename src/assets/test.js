@@ -230,10 +230,59 @@ export const profilesData = [
 ];
 
 export const passwordRequirements = {
-  1: ["2 letters", "3 numbers", "no special characters"],
-  2: ["5 letters", "1 special character", "no numbers"],
-  3: ["3 letters", "4 special characters", "no proper name"],
-  4: ["6 letters", "2 digits", "no repeated characters"],
+  1: ["2 uppercase letters", "4 digits", "no vowels"],
+  2: [
+    "5 lowercase letters",
+    "3 special characters",
+    "must start with a number",
+  ],
+  3: ["6 letters", "1 digit", "must end with an uppercase letter"],
+  4: [
+    "4 uppercase letters",
+    "2 lowercase letters",
+    "no consecutive identical characters",
+  ],
+  5: ["8 characters total", "at least 1 punctuation mark", "no numbers"],
+  6: ["3 digits", "4 lowercase letters", "must contain '@' or '#'"],
+  7: ["5 letters", "2 digits", "no character can repeat"],
+  8: ["4 uppercase letters", "1 lowercase letter", "must contain a number"],
+  9: ["3 special characters", "3 numbers", "must start and end with letters"],
+  10: ["7 characters total", "includes '&' or '*'", "no lowercase letters"],
+  11: ["4 letters", "4 digits", "must contain either '!' or '?'"],
+  12: ["10 characters", "only even numbers", "no uppercase letters"],
+  13: [
+    "3 uppercase letters",
+    "2 lowercase letters",
+    "1 special character",
+    "no numbers",
+  ],
+  14: [
+    "6 characters total",
+    "must include a date format like 'dd' or 'mm'",
+    "no special characters",
+  ],
+  15: [
+    "5 letters",
+    "2 numbers",
+    "one lowercase and one uppercase must be consecutive",
+  ],
+  16: ["9 characters", "2 punctuation marks", "must end with a number"],
+  17: [
+    "7 letters",
+    "1 digit",
+    "cannot use the letters 'a', 'e', 'i', 'o', 'u'",
+  ],
+  18: [
+    "5 lowercase letters",
+    "3 uppercase letters",
+    "must contain either '-' or '_'",
+  ],
+  19: ["4 digits", "2 uppercase letters", "must start with a letter"],
+  20: [
+    "8 characters",
+    "3 special characters",
+    "no alphabetical characters should be consecutive",
+  ],
 };
 
 export const user = {

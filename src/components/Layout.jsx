@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
   CssBaseline,
@@ -18,7 +18,9 @@ import MenuIcon from "@mui/icons-material/Menu";
 import InfoIcon from "@mui/icons-material/Info";
 import PersonIcon from "@mui/icons-material/Person";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import { ArrowBack } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Create a dark theme
 const darkTheme = createTheme({
@@ -54,9 +56,13 @@ const darkTheme = createTheme({
 
 const AppLayout = ({ children, isLoggedIn }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-
+  const navigate = useNavigate();
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleBackClick = () => {
+    navigate(-1);
   };
 
   const drawer = (
@@ -137,18 +143,36 @@ const AppLayout = ({ children, isLoggedIn }) => {
                 <IconButton
                   edge="start"
                   color="inherit"
+                  aria-label="back"
+                  onClick={handleBackClick}
+                >
+                  <ArrowBack />
+                </IconButton>
+
+                <Typography
+                  variant="h6"
+                  noWrap
+                  sx={{ flexGrow: 1, textAlign: "center" }}
+                  onClick={() => {
+                    navigate("/");
+                  }}
+                >
+                  MDA Proyecto 2024
+                </Typography>
+
+                <IconButton
+                  edge="end"
+                  color="inherit"
                   aria-label="menu"
                   onClick={handleDrawerToggle}
                 >
                   <MenuIcon />
                 </IconButton>
-                <Typography variant="h6" noWrap>
-                  MDA Proyecto 2024
-                </Typography>
               </Toolbar>
             </AppBar>
 
             <Drawer
+              anchor="right"
               variant="temporary"
               open={mobileOpen}
               onClose={handleDrawerToggle}

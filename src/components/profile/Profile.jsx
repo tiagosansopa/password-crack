@@ -7,13 +7,14 @@ import {
   Button,
   Avatar,
 } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
+
 import PasswordTesterForm from "../PasswordTesterForm";
 
 const Profile = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+
   const [profile, setProfileData] = useState({});
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -30,27 +31,16 @@ const Profile = () => {
     fetchProfiles();
   }, []);
 
-  const handleBackClick = () => {
-    navigate(-1); // Go back to the previous page
-  };
-
   return (
     <>
       <Box sx={{ p: 3 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleBackClick}
-          sx={{ mb: 2 }}
-        >
-          Back
-        </Button>
         <Card
           sx={{
             display: "flex",
             flexDirection: { xs: "column", sm: "row" },
             p: 2,
             maxWidth: "600px",
+            backgroundColor: profile.cracked ? "green" : "default",
           }}
         >
           <Box
@@ -106,7 +96,7 @@ const Profile = () => {
           </CardContent>
         </Card>
       </Box>
-      <PasswordTesterForm id={profile.id} />
+      <PasswordTesterForm profile={profile} />
     </>
   );
 };

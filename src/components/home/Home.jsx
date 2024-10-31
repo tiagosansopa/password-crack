@@ -5,7 +5,7 @@ const Home = ({ onLogout }) => {
   return (
     <Box sx={{ textAlign: "center", mt: 4 }}>
       <Typography variant="h4" gutterBottom>
-        Password Cracker
+        MDA Proyecto
       </Typography>
       <Button variant="contained" color="primary" onClick={onLogout}>
         Logout

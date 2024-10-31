@@ -11,10 +11,9 @@ import {
 
 import { passwordRequirements } from "../assets/test";
 
-const PasswordTesterForm = ({ id }) => {
+const PasswordTesterForm = ({ profile }) => {
   const [regex, setRegex] = useState("");
-  const [passwordsTested, setPasswordsTested] = useState(0);
-  const [attemptsMade, setAttemptsMade] = useState(0);
+  const [attemptsMade, setAttemptsMade] = useState(profile.attempt_count);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -26,10 +25,13 @@ const PasswordTesterForm = ({ id }) => {
         max_attempts: maxAttempts.toString(),
       });
 
+      const token = localStorage.getItem("token");
+
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${token}`, // Add token to headers
         },
         body: body.toString(),
       });
@@ -39,7 +41,6 @@ const PasswordTesterForm = ({ id }) => {
       }
 
       const data = await response.json();
-
       return data;
     } catch (error) {
       console.error("Error:", error);
@@ -49,22 +50,20 @@ const PasswordTesterForm = ({ id }) => {
   const handleSubmit = async () => {
     setLoading(true);
     const maxAttempts = 100000;
-    const response = await validatePasswordGuess(id, regex, maxAttempts);
-    console.log(response);
+    setResult(null);
+    const response = await validatePasswordGuess(
+      profile.id,
+      regex,
+      maxAttempts
+    );
     setResult(response);
     setLoading(false);
-  };
-
-  // Assume passwordType is 3 for this example
-  const passwordType = 3;
-
-  const handleTest = () => {
     setAttemptsMade(attemptsMade + 1);
   };
+  const passwordType = 3;
 
   return (
     <Box sx={{ p: 3, display: "flex", gap: 2 }}>
-      {/* Password Requirements Section */}
       <Box
         sx={{
           width: "50%",
@@ -106,12 +105,9 @@ const PasswordTesterForm = ({ id }) => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => {
-            handleTest();
-            handleSubmit();
-          }}
+          onClick={handleSubmit}
           disabled={loading}
-          startIcon={loading ? <CircularProgress size={20} /> : null} // Show CircularProgress when loading
+          startIcon={loading ? <CircularProgress size={20} /> : null}
         >
           {loading ? "Testing..." : "Test"}
         </Button>
@@ -150,6 +146,21 @@ const PasswordTesterForm = ({ id }) => {
               <Typography>{result.message}</Typography>
             </Box>
           ))}
+
+        {result?.password && (
+          <Box
+            sx={{
+              backgroundColor: "orange",
+              color: "white",
+              p: 2,
+              mt: 2,
+              borderRadius: "8px",
+              textAlign: "center",
+            }}
+          >
+            <Typography>El password es {result.password}</Typography>
+          </Box>
+        )}
       </Box>
     </Box>
   );
