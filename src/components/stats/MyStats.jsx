@@ -27,7 +27,6 @@ const MyStats = ({ onLogout }) => {
           }
         );
         const data = await response.json();
-        console.log("el profile", data);
         setProfile(data);
         setLoading(false);
       } catch (err) {
@@ -57,18 +56,29 @@ const MyStats = ({ onLogout }) => {
       <Card sx={{ maxWidth: 400, mx: "auto", p: 3, borderRadius: "8px" }}>
         <CardContent>
           <Typography variant="h4" gutterBottom>
-            My Profile
+            Perfil
           </Typography>
-          <Typography variant="body1" gutterBottom>
-            <strong>Name:</strong>{" "}
-            {`${profile.first_name} ${profile.last_name}`}
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            <strong>Username:</strong> {profile.username}
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            <strong>Email:</strong> {profile.email}
-          </Typography>
+
+          <Box sx={{ display: "flex", justifyContent: "space-between", my: 1 }}>
+            <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+              Nombre:
+            </Typography>
+            <Typography variant="body1">{`${profile.first_name} ${profile.last_name}`}</Typography>
+          </Box>
+
+          <Box sx={{ display: "flex", justifyContent: "space-between", my: 1 }}>
+            <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+              Usuario:
+            </Typography>
+            <Typography variant="body1">{profile.username}</Typography>
+          </Box>
+
+          <Box sx={{ display: "flex", justifyContent: "space-between", my: 1 }}>
+            <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+              Email:
+            </Typography>
+            <Typography variant="body1">{profile.email}</Typography>
+          </Box>
         </CardContent>
 
         <Button

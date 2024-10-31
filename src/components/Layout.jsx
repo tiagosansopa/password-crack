@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import {
   CssBaseline,
@@ -23,19 +23,31 @@ import { Link } from "react-router-dom";
 // Create a dark theme
 const darkTheme = createTheme({
   palette: {
-    mode: "dark", // Enable dark mode
+    mode: "dark",
     background: {
-      default: "#121212", // Dark background
-      paper: "#1e1e1e", // Lighter background for elements like paper/cards
+      default: "#121212",
+      paper: "#1e1e1e",
     },
     text: {
-      primary: "#ffffff", // White text
+      primary: "#ffffff",
     },
     primary: {
-      main: "#90caf9", // Light blue as primary color
+      main: "#90caf9",
     },
     secondary: {
-      main: "#f48fb1", // Light pink as secondary color
+      main: "#f48fb1",
+    },
+  },
+  components: {
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          "&:hover": {
+            backgroundColor: "#333",
+            borderRadius: "8px",
+          },
+        },
+      },
     },
   },
 });
@@ -48,25 +60,65 @@ const AppLayout = ({ children, isLoggedIn }) => {
   };
 
   const drawer = (
-    <div>
+    <div style={{ padding: "20px 10px" }}>
       <List>
-        <ListItem button component={Link} to="/instructions">
-          <ListItemText primary="Instructions" />
+        <ListItem
+          component={Link}
+          onClick={handleDrawerToggle}
+          to="/my-stats"
+          sx={{
+            marginY: 1,
+            paddingY: 1.5,
+            borderRadius: "8px",
+            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+            },
+          }}
+        >
           <ListItemIcon>
-            <InfoIcon /> {/* Icon for Instructions */}
+            <BarChartIcon sx={{ color: "#90caf9" }} />
           </ListItemIcon>
+          <ListItemText primary="Perfil" />
         </ListItem>
-        <ListItem button component={Link} to="/profiles">
-          <ListItemText primary="Profiles" />
+        <ListItem
+          component={Link}
+          onClick={handleDrawerToggle}
+          to="/instructions"
+          sx={{
+            marginY: 1,
+            paddingY: 1.5,
+            borderRadius: "8px",
+            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+            },
+          }}
+        >
           <ListItemIcon>
-            <PersonIcon /> {/* Icon for Profiles */}
+            <InfoIcon sx={{ color: "#90caf9" }} />
           </ListItemIcon>
+          <ListItemText primary="Parte 1" />
         </ListItem>
-        <ListItem button component={Link} to="/my-stats">
-          <ListItemText primary="My Stats" />
+
+        <ListItem
+          component={Link}
+          onClick={handleDrawerToggle}
+          to="/profiles"
+          sx={{
+            marginY: 1,
+            paddingY: 1.5,
+            borderRadius: "8px",
+            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+            },
+          }}
+        >
           <ListItemIcon>
-            <BarChartIcon /> {/* Icon for My Stats */}
+            <PersonIcon sx={{ color: "#f48fb1" }} />
           </ListItemIcon>
+          <ListItemText primary="Perfiles" />
         </ListItem>
       </List>
     </div>
@@ -74,11 +126,10 @@ const AppLayout = ({ children, isLoggedIn }) => {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <CssBaseline /> {/* This applies the dark theme globally */}
+      <CssBaseline />
       <Box
         sx={{ display: "flex", minHeight: "100vh", flexDirection: "column" }}
       >
-        {/* Conditionally render AppBar and Drawer if the user is logged in */}
         {isLoggedIn && (
           <>
             <AppBar position="fixed">
@@ -105,7 +156,7 @@ const AppLayout = ({ children, isLoggedIn }) => {
                 keepMounted: true,
               }}
               PaperProps={{
-                sx: { width: 240 },
+                sx: { width: 240, backgroundColor: "#121212" },
               }}
             >
               {drawer}
@@ -113,7 +164,6 @@ const AppLayout = ({ children, isLoggedIn }) => {
           </>
         )}
 
-        {/* Main content with centered layout for larger screens */}
         <Box
           component="main"
           sx={{
@@ -121,14 +171,15 @@ const AppLayout = ({ children, isLoggedIn }) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            marginTop: "60px", // Small top margin (adjust as needed)
-            width: "100vw", // Full viewport width
+            marginTop: "60px",
+            width: "100vw",
           }}
         >
           <Container
-            maxWidth="sm" // Controls maximum width, mobile-first centered
             sx={{
+              width: { xs: "90%", md: "70%", lg: "90%" }, // Responsive widths in percentage
               textAlign: "center",
+              px: { xs: 1, sm: 2, md: 3, lg: 4 },
             }}
           >
             {children}

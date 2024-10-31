@@ -6,42 +6,40 @@ import {
   TextField,
   List,
   ListItem,
-  Card,
-  CardContent,
+  CircularProgress,
 } from "@mui/material";
 
 import { passwordRequirements } from "../assets/test";
 
-const PasswordTesterForm = () => {
+const PasswordTesterForm = ({ id }) => {
   const [regex, setRegex] = useState("");
   const [passwordsTested, setPasswordsTested] = useState(0);
-  const [possiblePasswords, setPossiblePasswords] = useState(0);
   const [attemptsMade, setAttemptsMade] = useState(0);
-  const [passwordCracked, setPasswordCracked] = useState(null);
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   async function validatePasswordGuess(id, pattern, maxAttempts) {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/validate-password/${id}/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            pattern: pattern,
-            max_attempts: maxAttempts,
-          }),
-        }
-      );
+      const url = `${import.meta.env.VITE_API_URL}/validate-password/${id}/`;
+      const body = new URLSearchParams({
+        pattern: pattern,
+        max_attempts: maxAttempts.toString(),
+      });
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: body.toString(),
+      });
 
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log("Response:", data);
+
       return data;
     } catch (error) {
       console.error("Error:", error);
@@ -49,28 +47,19 @@ const PasswordTesterForm = () => {
   }
 
   const handleSubmit = async () => {
-    const id = 1;
-    const maxAttempts = 500000;
+    setLoading(true);
+    const maxAttempts = 100000;
     const response = await validatePasswordGuess(id, regex, maxAttempts);
     console.log(response);
     setResult(response);
+    setLoading(false);
   };
 
   // Assume passwordType is 3 for this example
   const passwordType = 3;
 
-  // Function to handle regex testing (dummy logic for now)
   const handleTest = () => {
-    setPasswordsTested(passwordsTested + 1);
-    setPossiblePasswords(50); // Just an example number
     setAttemptsMade(attemptsMade + 1);
-
-    // Dummy condition to simulate password cracking
-    if (regex === "correct-regex") {
-      setPasswordCracked(true);
-    } else {
-      setPasswordCracked(false);
-    }
   };
 
   return (
@@ -93,7 +82,6 @@ const PasswordTesterForm = () => {
         </List>
       </Box>
 
-      {/* Form Section for Regex Testing */}
       <Box
         sx={{
           width: "50%",
@@ -102,12 +90,13 @@ const PasswordTesterForm = () => {
         }}
       >
         <Typography variant="h6" gutterBottom>
-          Test your Regular Expression
+          Ingresar expresion regular
         </Typography>
 
         <TextField
-          label="Regular Expression"
+          label=""
           variant="outlined"
+          placeholder="Ejemplo [a-z]{8}"
           fullWidth
           value={regex}
           onChange={(e) => setRegex(e.target.value)}
@@ -121,33 +110,20 @@ const PasswordTesterForm = () => {
             handleTest();
             handleSubmit();
           }}
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={20} /> : null} // Show CircularProgress when loading
         >
-          Test
+          {loading ? "Testing..." : "Test"}
         </Button>
 
-        {/* Display Results */}
         <Box sx={{ mt: 3 }}>
           <Typography variant="body1">
-            Passwords tested: {passwordsTested}
-          </Typography>
-          <Typography variant="body1">
-            All possible passwords with that regex: {possiblePasswords}
-          </Typography>
-          <Typography variant="body1">
-            Cantidad de intentos hechos: {attemptsMade}
+            Cantidad de intentos realizados: {attemptsMade}
           </Typography>
         </Box>
 
-        {result && (
-          <div>
-            <h3>Result</h3>
-            <p>{result.message}</p>
-          </div>
-        )}
-
-        {/* Conditional Message */}
-        {passwordCracked !== null &&
-          (passwordCracked ? (
+        {result &&
+          (result.success ? (
             <Box
               sx={{
                 backgroundColor: "green",
@@ -158,7 +134,7 @@ const PasswordTesterForm = () => {
                 textAlign: "center",
               }}
             >
-              <Typography>Password cracked!</Typography>
+              <Typography>{result.message}</Typography>
             </Box>
           ) : (
             <Box
@@ -171,7 +147,7 @@ const PasswordTesterForm = () => {
                 textAlign: "center",
               }}
             >
-              <Typography>Password not cracked yet.</Typography>
+              <Typography>{result.message}</Typography>
             </Box>
           ))}
       </Box>

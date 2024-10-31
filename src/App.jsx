@@ -13,6 +13,7 @@ import Profile from "./components/profile/Profile";
 import MyStats from "./components/stats/MyStats";
 import Home from "./components/home/Home";
 import { user } from "./assets/test";
+
 function PasswordCrackerApp() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -25,6 +26,14 @@ function PasswordCrackerApp() {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
   };
+
+  // Check if user is logged in on initial load
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   return (
     <Router>
