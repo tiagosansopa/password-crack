@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -10,45 +10,40 @@ import {
 } from "@mui/material";
 
 import { passwordRequirements } from "../assets/test";
+import useApi from "../hooks/useApi";
 
 const PasswordTesterForm = ({ profile }) => {
+  const [passwordType, setPasswordType] = useState(null);
   const [regex, setRegex] = useState("");
-  const [attemptsMade, setAttemptsMade] = useState(profile.attempt_count);
   const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { fetchWithRefresh, loading } = useApi();
 
   async function validatePasswordGuess(id, pattern, maxAttempts) {
-    try {
-      const url = `${import.meta.env.VITE_API_URL}/validate-password/${id}/`;
-      const body = new URLSearchParams({
-        pattern: pattern,
-        max_attempts: maxAttempts.toString(),
-      });
+    const url = `${import.meta.env.VITE_API_URL}/validate-password/${id}/`;
+    const body = new URLSearchParams({
+      pattern: pattern,
+      max_attempts: maxAttempts.toString(),
+    });
 
-      const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Bearer ${token}`, // Add token to headers
-        },
-        body: body.toString(),
-      });
+    const response = await fetchWithRefresh(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${token}`,
+      },
+      body: body.toString(),
+    });
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error:", error);
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
     }
+
+    return await response.json();
   }
 
   const handleSubmit = async () => {
-    setLoading(true);
     const maxAttempts = 100000;
     setResult(null);
     const response = await validatePasswordGuess(
@@ -57,10 +52,13 @@ const PasswordTesterForm = ({ profile }) => {
       maxAttempts
     );
     setResult(response);
-    setLoading(false);
-    setAttemptsMade(attemptsMade + 1);
   };
-  const passwordType = 3;
+
+  useEffect(() => {
+    if (profile.password_requirements !== undefined) {
+      setPasswordType(profile.password_requirements);
+    }
+  }, [profile.password_requirements]);
 
   return (
     <Box sx={{ p: 3, display: "flex", gap: 2 }}>
@@ -75,9 +73,13 @@ const PasswordTesterForm = ({ profile }) => {
           Password Requirements:
         </Typography>
         <List>
-          {passwordRequirements[passwordType].map((requirement, index) => (
-            <ListItem key={index}>• {requirement}</ListItem>
-          ))}
+          {passwordType !== null && passwordRequirements[passwordType] ? (
+            passwordRequirements[passwordType].map((requirement, index) => (
+              <ListItem key={index}>• {requirement}</ListItem>
+            ))
+          ) : (
+            <Typography>No requirements available.</Typography>
+          )}
         </List>
       </Box>
 
@@ -111,12 +113,6 @@ const PasswordTesterForm = ({ profile }) => {
         >
           {loading ? "Testing..." : "Test"}
         </Button>
-
-        <Box sx={{ mt: 3 }}>
-          <Typography variant="body1">
-            Cantidad de intentos realizados: {attemptsMade}
-          </Typography>
-        </Box>
 
         {result &&
           (result.success ? (

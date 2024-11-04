@@ -29,6 +29,7 @@ const AuthForm = ({ onLogin }) => {
       if (response.ok) {
         setMessage("Login successful!");
         localStorage.setItem("token", data.access);
+        localStorage.setItem("refresh", data.refresh);
         onLogin(data.access);
       } else {
         setMessage("Login failed");
@@ -60,6 +61,7 @@ const AuthForm = ({ onLogin }) => {
       if (response.ok) {
         setMessage("Registration successful!");
         localStorage.setItem("token", data.access);
+        localStorage.setItem("refresh", data.refresh);
         onLogin(data.access);
       } else {
         setMessage(data.error || "Registration failed");

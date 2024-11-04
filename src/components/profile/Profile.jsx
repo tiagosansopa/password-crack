@@ -11,23 +11,33 @@ import { useParams } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 
 import PasswordTesterForm from "../PasswordTesterForm";
+import useApi from "../../hooks/useApi";
 
 const Profile = () => {
   const { id } = useParams();
 
   const [profile, setProfileData] = useState({});
+  const { fetchWithRefresh, loading } = useApi();
+
+  const fetchProfiles = async () => {
+    const url = `${import.meta.env.VITE_API_URL}/profiles/${id}/`;
+    const token = localStorage.getItem("token");
+    const response = await fetchWithRefresh(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    setProfileData(data);
+  };
+
   useEffect(() => {
-    const fetchProfiles = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/profiles/${id}/`
-        );
-        const data = await response.json();
-        setProfileData(data);
-      } catch (error) {
-        console.error("Error fetching profiles:", error);
-      }
-    };
     fetchProfiles();
   }, []);
 
