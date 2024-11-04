@@ -8,34 +8,35 @@ import {
   CircularProgress,
 } from "@mui/material";
 
+import useApi from "../../hooks/useApi";
+
 const MyStats = ({ onLogout }) => {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState({});
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/profile/`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await response.json();
-        setProfile(data);
-        setLoading(false);
-      } catch (err) {
-        console.log(err);
-        setError("Failed to load profile. Please try again.");
-        setLoading(false);
-      }
-    };
+  const { fetchWithRefresh, loading } = useApi();
 
+  const fetchProfile = async () => {
+    const url = `${import.meta.env.VITE_API_URL}/profile/`;
+    const token = localStorage.getItem("token");
+    const response = await fetchWithRefresh(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      setError("Failed to load profile. Please try again.");
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    setProfile(data);
+    console.log("EXCITED", data);
+  };
+
+  useEffect(() => {
     fetchProfile();
   }, []);
 

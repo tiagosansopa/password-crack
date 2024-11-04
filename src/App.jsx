@@ -12,7 +12,6 @@ import Profiles from "./components/profile/Profiles";
 import Profile from "./components/profile/Profile";
 import MyStats from "./components/stats/MyStats";
 import Home from "./components/home/Home";
-import { user } from "./assets/test";
 
 function PasswordCrackerApp() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -47,14 +46,7 @@ function PasswordCrackerApp() {
             <Route path="/instructions" element={<Instructions />} />
             <Route
               path="/my-stats"
-              element={
-                <MyStats
-                  name={user.name}
-                  username={user.username}
-                  email={user.email}
-                  onLogout={handleLogout}
-                />
-              }
+              element={<MyStats onLogout={handleLogout} />}
             />
             <Route path="/profiles" element={<Profiles />} />
             <Route path="/profiles/:id" element={<Profile />} />
