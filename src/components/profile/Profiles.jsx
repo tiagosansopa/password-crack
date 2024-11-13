@@ -49,7 +49,12 @@ const Profiles = () => {
         profilesData.map((profile) => (
           <Grid item xs={12} sm={6} md={4} key={profile.id}>
             <Card
-              sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                backgroundColor: profile.cracked ? "green" : "default",
+              }}
             >
               <CardActionArea
                 onClick={() => handleProfileClick(profile.id)}
