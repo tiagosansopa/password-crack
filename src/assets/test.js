@@ -99,7 +99,7 @@ export const passwordRequirements = {
   ],
   38: [
     "7 caracteres en total",
-    "debe incluir un carácter de puntuación",
+    "debe incluir un carácter de puntuación (,.;)",
     "al menos 1 letra y 1 número",
   ],
   39: [

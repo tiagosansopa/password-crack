@@ -89,20 +89,23 @@ const Profile = () => {
             }}
           >
             <Typography variant="body1">
-              <strong>Date of Birth:</strong> {profile.birthday}
+              <strong>Cumpleaños:</strong> {profile.birthday}
             </Typography>
             <Typography variant="body1">
-              <strong>Role:</strong> {profile.profession}
+              <strong>Rol:</strong> {profile.profession}
             </Typography>
             <Typography variant="body1">
-              <strong>Years at Company:</strong> {profile.yearsAtCompany}
+              <strong>Incio a trabajar en:</strong> {profile.yearsAtCompany}
             </Typography>
             <Typography variant="body1">
-              <strong>Additional Info:</strong> {profile.description}
+              <strong>Informacion Adicional:</strong> {profile.description}
             </Typography>
-            <Typography variant="body1">
-              <strong>Password Type:</strong> {profile.password_requirements}
-            </Typography>
+
+            {profile.cracked && (
+              <Typography variant="body1">
+                <strong>Password:</strong> {profile.password}
+              </Typography>
+            )}
           </CardContent>
         </Card>
       </Box>
